@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package provisioner;
+
+enum Provider {
+  AWS = 0;
+  AZURE = 1;
+  GCP = 2;
+}
+
+service ProvisionerService {
+  rpc GetProvisionerStatus (StatusRequest) returns (StatusResponse);
+  rpc CreateEnvironment (EnvCreateRequest) returns (EnvCreateResponse);
+}
+
+message StatusRequest {}
+
+message StatusResponse {
+  string data = 1;
+}
+
+message EnvConfig {
+  int64 node_count = 1;
+}
+
+message EnvCreateRequest {
+  string id = 1;
+  string name = 2;
+  Provider provider = 3; 
+  EnvConfig node_config = 4;
+}
+
+message EnvCreateResponse {
+  string status = 1;
+}
