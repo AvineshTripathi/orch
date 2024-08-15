@@ -67,10 +67,12 @@ lint:
 # Generate gRPC code
 proto:
 	@echo "Generating gRPC code..."
-	protoc --go_out=paths=source_relative:. --go-grpc_out=paths=source_relative:. \
-		--go_opt=Mproto-provisioner/service.proto=example-api/proto-provisioner \
-		--go-grpc_opt=Mproto-provisioner/service.proto=example-api/proto-provisioner \
-		proto-provisioner/service.proto
+	protoc --go_out=paths=source_relative:. \
+       --go-grpc_out=paths=source_relative:. \
+       --go_opt=Mproto-provisioner/service.proto=orch/proto-provisioner \
+       --go-grpc_opt=Mproto-provisioner/service.proto=orch/proto-provisioner \
+       proto-provisioner/service.proto
+
 
 # Display available commands
 help:

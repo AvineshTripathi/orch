@@ -15,6 +15,6 @@ func (s *Server) GetProvisionerStatus(ctx context.Context, req *pb.StatusRequest
 	return &pb.StatusResponse{Data: "provisioner is up and running"}, nil
 }
 
-func (s *Server) CreateEnvironment(ctx context.Context, req *pb.EnvCreateRequest) (*pb.EnvCreateResponse, error) {
-	return &pb.EnvCreateResponse{Status: "Environment creation started"}, nil
+func (s *Server) CreateEnvironment(ctx context.Context, req *pb.TaskCreateRequest) (*pb.TaskCreateResponse, error) {
+	return &pb.TaskCreateResponse{Status: ""}, nil
 }

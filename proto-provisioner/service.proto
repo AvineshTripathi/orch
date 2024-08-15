@@ -10,7 +10,7 @@ enum Provider {
 
 service ProvisionerService {
   rpc GetProvisionerStatus (StatusRequest) returns (StatusResponse);
-  rpc CreateEnvironment (EnvCreateRequest) returns (EnvCreateResponse);
+  rpc CreateEnvironment (TaskCreateRequest) returns (TaskCreateResponse);
 }
 
 message StatusRequest {}
@@ -20,16 +20,16 @@ message StatusResponse {
 }
 
 message EnvConfig {
-  int64 node_count = 1;
+  string config = 1;
 }
 
-message EnvCreateRequest {
+message TaskCreateRequest {
   string id = 1;
   string name = 2;
   Provider provider = 3; 
   EnvConfig node_config = 4;
 }
 
-message EnvCreateResponse {
+message TaskCreateResponse {
   string status = 1;
-}
+} 
