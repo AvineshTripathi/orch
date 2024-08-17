@@ -3,14 +3,14 @@ package api
 import (
 	"context"
 	pb "orch/proto-provisioner"
+	"orch/provisioner/queue"
 )
 
-// server implements provisioner.ProvisionerServiceServer
 type Server struct {
 	pb.UnimplementedProvisionerServiceServer
+	queueClient queue.Client
 }
 
-// GetProvisionerStatus implements provisioner.ProvisionerServiceServer
 func (s *Server) GetProvisionerStatus(ctx context.Context, req *pb.StatusRequest) (*pb.StatusResponse, error) {
 	return &pb.StatusResponse{Data: "provisioner is up and running"}, nil
 }

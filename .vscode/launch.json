@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug API Server",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceFolder}/main.go", // Path to your main file for API server
+        "env": {},
+        "args": [],
+        "buildFlags": "",
+        "port": 8080 // The port number used by the server
+      },
+      {
+        "name": "Debug Provisioner Server",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceFolder}/provisioner/main.go", // Path to your main file for Provisioner
+        "env": {},
+        "args": [],
+        "buildFlags": "",
+        // "port": 50051 // The port number used by the gRPC server
+      },
+      {
+        "name": "Debug Both Servers",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceFolder}", // Run the entire workspace (API and Provisioner)
+        "env": {},
+        "args": [],
+        "buildFlags": "",
+        "compound": {
+          "configurations": ["Debug API Server", "Debug Provisioner Server"]
+        }
+      }
+    ]
+  }
+  

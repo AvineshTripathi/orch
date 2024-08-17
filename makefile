@@ -73,6 +73,9 @@ proto:
        --go-grpc_opt=Mproto-provisioner/service.proto=orch/proto-provisioner \
        proto-provisioner/service.proto
 
+infra:
+	@echo "Provisioning infra..."
+	docker compose up -d 
 
 # Display available commands
 help:

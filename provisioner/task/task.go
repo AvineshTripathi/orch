@@ -3,20 +3,20 @@ package task
 import "github.com/oklog/ulid/v2"
 
 type Task struct {
-	ID    ulid.ULID
+	ID    string
 	URL   string
 	Retry int
 }
 
 func NewTask(url string) *Task {
 	return &Task{
-		ID:    ulid.Make(),
+		ID:    ulid.Make().String(),
 		URL:   url,
 		Retry: 0,
 	}
 }
 
-func (t *Task) GetID() ulid.ULID {
+func (t *Task) GetID() string {
 	return t.ID
 }
 
