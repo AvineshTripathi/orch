@@ -13,7 +13,7 @@ var client pb.ProvisionerServiceClient
 
 // InitializeClient initializes the gRPC client
 func InitializeClient() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:50052", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

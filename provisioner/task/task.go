@@ -1,31 +1,39 @@
 package task
 
-import "github.com/oklog/ulid/v2"
+import (
+	"github.com/oklog/ulid/v2"
+)
 
 type Task struct {
-	ID    string
-	URL   string
+	Id    string
+	Url   string
+	Data  string
 	Retry int
 }
 
-func NewTask(url string) *Task {
+func NewTask(url, data string) *Task {
 	return &Task{
-		ID:    ulid.Make().String(),
-		URL:   url,
+		Id:    ulid.Make().String(),
+		Url:   url,
+		Data:  data,
 		Retry: 0,
 	}
 }
 
 func (t *Task) GetID() string {
-	return t.ID
+	return t.Id
 }
 
 func (t *Task) GetURL() string {
-	return t.URL
+	return t.Url
 }
 
 func (t *Task) GetRetry() int {
 	return t.Retry
+}
+
+func (t *Task) GetData() string {
+	return t.Data
 }
 
 func (t *Task) IncrementRetry() {

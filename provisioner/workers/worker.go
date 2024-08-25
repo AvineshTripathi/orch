@@ -29,10 +29,9 @@ func (w *Worker) StartWorker() {
 		for {
 			select {
 			case task := <-w.TaskChan:
-				fmt.Printf("Worker %d processing task %d\n", w.ID, task.GetID())
+				fmt.Printf("Worker %d processing task id %s, url %s, data %s\n", w.ID, task.GetID(), task.GetURL(), task.GetData())
 			case <-w.quit:
 				fmt.Printf("Worker %d stopping...\n", w.ID)
-				w.wg.Done()
 				return
 			}
 		}

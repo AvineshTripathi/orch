@@ -8,6 +8,7 @@ import (
 	"orch/handlers"
 	"orch/middleware"
 	"orch/provisioner-client"
+	"orch/provisioner/queue"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,6 +18,9 @@ import (
 )
 
 func main() {
+
+	queueClient := queue.NewConnection()
+
 	// Load configuration
 	config.Load()
 
@@ -30,6 +34,7 @@ func main() {
 	// Define routes
 	r.HandleFunc("/", handlers.ApiServerStatusHandler).Methods(http.MethodGet)
 	r.HandleFunc("/provisioner", handlers.ProvisionerStatusHandler).Methods(http.MethodGet)
+	r.HandleFunc("/newTask", handlers.AddTaskToQueueHandler(queueClient)).Methods(http.MethodPost)
 
 	// Set up server
 	srv := &http.Server{

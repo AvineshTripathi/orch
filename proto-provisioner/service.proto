@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package provisioner;
 
-enum Provider {
-  AWS = 0;
-  AZURE = 1;
-  GCP = 2;
-}
+// enum Provider {
+//   AWS = 0;
+//   AZURE = 1;
+//   GCP = 2;
+// }
 
 service ProvisionerService {
   rpc GetProvisionerStatus (StatusRequest) returns (StatusResponse);
-  rpc CreateEnvironment (TaskCreateRequest) returns (TaskCreateResponse);
+  rpc ExecuteTask (TaskCreateRequest) returns (TaskCreateResponse);
 }
 
 message StatusRequest {}
@@ -19,15 +19,22 @@ message StatusResponse {
   string data = 1;
 }
 
+message BasicConfig {
+  string url = 1;
+  string data = 2;
+}
+
 message EnvConfig {
-  string config = 1;
+  oneof config_type {
+    BasicConfig basic_config = 1;
+  } 
 }
 
 message TaskCreateRequest {
   string id = 1;
   string name = 2;
-  Provider provider = 3; 
-  EnvConfig node_config = 4;
+  // Provider provider = 3; 
+  EnvConfig config = 4;
 }
 
 message TaskCreateResponse {

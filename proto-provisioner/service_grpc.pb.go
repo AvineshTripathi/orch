@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ProvisionerService_GetProvisionerStatus_FullMethodName = "/provisioner.ProvisionerService/GetProvisionerStatus"
-	ProvisionerService_CreateEnvironment_FullMethodName    = "/provisioner.ProvisionerService/CreateEnvironment"
+	ProvisionerService_ExecuteTask_FullMethodName          = "/provisioner.ProvisionerService/ExecuteTask"
 )
 
 // ProvisionerServiceClient is the client API for ProvisionerService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProvisionerServiceClient interface {
 	GetProvisionerStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusResponse, error)
-	CreateEnvironment(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*TaskCreateResponse, error)
+	ExecuteTask(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*TaskCreateResponse, error)
 }
 
 type provisionerServiceClient struct {
@@ -49,10 +49,10 @@ func (c *provisionerServiceClient) GetProvisionerStatus(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *provisionerServiceClient) CreateEnvironment(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*TaskCreateResponse, error) {
+func (c *provisionerServiceClient) ExecuteTask(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*TaskCreateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TaskCreateResponse)
-	err := c.cc.Invoke(ctx, ProvisionerService_CreateEnvironment_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ProvisionerService_ExecuteTask_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *provisionerServiceClient) CreateEnvironment(ctx context.Context, in *Ta
 // for forward compatibility.
 type ProvisionerServiceServer interface {
 	GetProvisionerStatus(context.Context, *StatusRequest) (*StatusResponse, error)
-	CreateEnvironment(context.Context, *TaskCreateRequest) (*TaskCreateResponse, error)
+	ExecuteTask(context.Context, *TaskCreateRequest) (*TaskCreateResponse, error)
 	mustEmbedUnimplementedProvisionerServiceServer()
 }
 
@@ -78,8 +78,8 @@ type UnimplementedProvisionerServiceServer struct{}
 func (UnimplementedProvisionerServiceServer) GetProvisionerStatus(context.Context, *StatusRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProvisionerStatus not implemented")
 }
-func (UnimplementedProvisionerServiceServer) CreateEnvironment(context.Context, *TaskCreateRequest) (*TaskCreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateEnvironment not implemented")
+func (UnimplementedProvisionerServiceServer) ExecuteTask(context.Context, *TaskCreateRequest) (*TaskCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteTask not implemented")
 }
 func (UnimplementedProvisionerServiceServer) mustEmbedUnimplementedProvisionerServiceServer() {}
 func (UnimplementedProvisionerServiceServer) testEmbeddedByValue()                            {}
@@ -120,20 +120,20 @@ func _ProvisionerService_GetProvisionerStatus_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProvisionerService_CreateEnvironment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProvisionerService_ExecuteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskCreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProvisionerServiceServer).CreateEnvironment(ctx, in)
+		return srv.(ProvisionerServiceServer).ExecuteTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProvisionerService_CreateEnvironment_FullMethodName,
+		FullMethod: ProvisionerService_ExecuteTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServiceServer).CreateEnvironment(ctx, req.(*TaskCreateRequest))
+		return srv.(ProvisionerServiceServer).ExecuteTask(ctx, req.(*TaskCreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -150,8 +150,8 @@ var ProvisionerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProvisionerService_GetProvisionerStatus_Handler,
 		},
 		{
-			MethodName: "CreateEnvironment",
-			Handler:    _ProvisionerService_CreateEnvironment_Handler,
+			MethodName: "ExecuteTask",
+			Handler:    _ProvisionerService_ExecuteTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

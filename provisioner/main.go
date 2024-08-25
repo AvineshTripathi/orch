@@ -2,58 +2,66 @@ package main
 
 import (
 	"log"
+	"net"
+	pb "orch/proto-provisioner"
+	"orch/provisioner/api"
 	"orch/provisioner/queue"
 	"orch/provisioner/task"
-	// "net"
-	// "os"
-	// "os/signal"
-	// "syscall"
-	// pb "orch/proto-provisioner"
-	// "orch/provisioner/api"
-	// "google.golang.org/grpc"
+	"orch/provisioner/workers"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+
+	"google.golang.org/grpc"
 )
 
 func main() {
-	// // Set up listener
-	// lis, err := net.Listen("tcp", ":50051")
-	// if err != nil {
-	// 	log.Fatalf("Failed to listen: %v", err)
-	// }
 
-	// // Set up gRPC server
-	// grpcServer := grpc.NewServer()
-	// pb.RegisterProvisionerServiceServer(grpcServer, &api.Server{})
+	var wg sync.WaitGroup
+	taskChan := make(chan task.Task, 10)
+	errChan := make(chan task.Task, 5)
 
-	// // Channel for graceful shutdown
-	// quit := make(chan os.Signal, 1)
-	// signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	wk := workers.NewWorker(1, taskChan, errChan, &wg)
 
-	// // Run gRPC server in a goroutine
-	// go func() {
-	// 	log.Println("gRPC server is running on port :50051")
-	// 	if err := grpcServer.Serve(lis); err != nil {
-	// 		log.Fatalf("Failed to serve: %v", err)
-	// 	}
-	// }()
+	wk.StartWorker()
 
-	// // Wait for interrupt signal for graceful shutdown
-	// <-quit
-	// log.Println("Shutting down gRPC server...")
+	queueClient := queue.NewConnection()
+	queueClient.ConfigureTaskChannel(taskChan, errChan)
 
-	// // Graceful stop
-	// grpcServer.GracefulStop()
-	// log.Println("gRPC server gracefully stopped")
+	queueClient.ProcessTasksContinuously()
+	queueClient.ProcessErrorConitnuously()
 
-	// log.Println("Server exited cleanly")
-
-	client := queue.NewConnection()
-	tsk := task.NewTask("url")
-	client.AddNewTask(tsk)
-
-	res, err := client.GetTasks()
+	lis, err := net.Listen("tcp", ":50052")
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
-	log.Println("Result:", res)
 
+	apiServer := &api.Server{
+		QueueClient: *queueClient,
+	}
+
+	grpcServer := grpc.NewServer()
+	pb.RegisterProvisionerServiceServer(grpcServer, apiServer)
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		log.Println("gRPC server is running on port :50051")
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("Failed to serve: %v", err)
+		}
+	}()
+
+	<-quit
+	log.Println("Shutting down gRPC server...")
+
+	queueClient.StopClient()
+	wk.StopWorker()
+
+	grpcServer.GracefulStop()
+	log.Println("gRPC server gracefully stopped")
+
+	log.Println("Server exited cleanly")
 }
