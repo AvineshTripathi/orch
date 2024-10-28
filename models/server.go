@@ -5,6 +5,6 @@ type ServerResponse struct {
 }
 
 type TaskRequest struct {
-	URL  string
-	Data string
+	PluginName string
+	Config       any
 }

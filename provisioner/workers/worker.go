@@ -2,24 +2,27 @@ package workers
 
 import (
 	"fmt"
-	"orch/provisioner/task"
+	"log"
+	"github.com/AvineshTripathi/orch/provisioner/task"
 	"sync"
 )
 
 type Worker struct {
 	ID       int
 	TaskChan chan task.Task
+	Executor *task.TaskExecutor
 	ErrChan  chan task.Task
 	wg       *sync.WaitGroup
 	quit     chan bool
 }
 
-func NewWorker(id int, taskChan chan task.Task, errChan chan task.Task, wg *sync.WaitGroup) *Worker {
+func NewWorker(id int, taskChan chan task.Task, errChan chan task.Task, taskExecutor *task.TaskExecutor, wg *sync.WaitGroup) *Worker {
 	return &Worker{
 		ID:       id,
 		TaskChan: taskChan,
 		ErrChan:  errChan,
 		wg:       wg,
+		Executor: taskExecutor,
 		quit:     make(chan bool),
 	}
 }
@@ -29,7 +32,12 @@ func (w *Worker) StartWorker() {
 		for {
 			select {
 			case task := <-w.TaskChan:
-				fmt.Printf("Worker %d processing task id %s, url %s, data %s\n", w.ID, task.GetID(), task.GetURL(), task.GetData())
+				fmt.Printf("Worker %d processing task id %s, plugin %s", w.ID, task.GetID(), task.GetPluginName())
+				err := w.Executor.Execute(&task)
+				if err != nil {
+					log.Println("Couldnot execute", err)
+					w.ErrChan <- task
+				}
 			case <-w.quit:
 				fmt.Printf("Worker %d stopping...\n", w.ID)
 				return

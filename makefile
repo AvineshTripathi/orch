@@ -4,13 +4,20 @@ BINARY_NAME_API = orch
 BINARY_NAME_PROVISIONER = provisioner-server
 PORT = 8080
 GRPC_PORT = 50051
+PLUGINS_DIR = provisioner/taskPlugins
 
-all: build
+all: generate-plugin build
 
 build: fmt vet
 	@echo "Building the project..."
 	$(GO) build -o $(BUILD_DIR)/$(BINARY_NAME_API) .
 	$(GO) build -o $(BUILD_DIR)/$(BINARY_NAME_PROVISIONER) ./provisioner
+
+generate-plugin:
+	@echo "Generating plugins..."
+	for file in $(wildcard $(PLUGINS_DIR)/*.go); do \
+		$(GO) build -buildmode=plugin -gcflags="all=-N -l" -o $$file.so $$file; \
+	done
 
 run: run-dev
 
@@ -26,7 +33,7 @@ run-dev: build
 	@echo "Running gRPC server on port $(GRPC_PORT)..."
 	$(BUILD_DIR)/$(BINARY_NAME_PROVISIONER) &
 	# TODO: need to find a better solution
-	sleep 8
+	sleep 12
 	@echo "Running REST API server on port $(PORT)..."
 	$(BUILD_DIR)/$(BINARY_NAME_API)
 
@@ -67,7 +74,7 @@ infra:
 
 help:
 	@echo "Available commands:"
-	@echo "  make all       - Build the project"
+	@echo "  make all       - Build the project and generate plugins"
 	@echo "  make build     - Build the project"
 	@echo "  make run       - Build and run the project (default: development mode)"
 	@echo "  make run-dev   - Run the project in development mode"

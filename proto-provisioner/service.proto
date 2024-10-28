@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package provisioner;
 
+import "google/protobuf/any.proto";
+
 // enum Provider {
 //   AWS = 0;
 //   AZURE = 1;
@@ -33,8 +35,7 @@ message EnvConfig {
 message TaskCreateRequest {
   string id = 1;
   string name = 2;
-  // Provider provider = 3; 
-  EnvConfig config = 4;
+  google.protobuf.Any data = 3;
 }
 
 message TaskCreateResponse {

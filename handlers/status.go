@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/AvineshTripathi/orch/models"
+	"github.com/AvineshTripathi/orch/provisioner-client"
+	"github.com/AvineshTripathi/orch/utils"
 	"net/http"
-	"orch/models"
-	"orch/provisioner-client"
-	"orch/utils"
 )
 
 func ApiServerStatusHandler(w http.ResponseWriter, r *http.Request) {

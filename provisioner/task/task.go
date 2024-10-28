@@ -5,17 +5,19 @@ import (
 )
 
 type Task struct {
-	Id    string
-	Url   string
-	Data  string
-	Retry int
+	Id     string
+	Plugin string
+	Data   string
+	Config any
+	Retry  int
 }
 
-func NewTask(url, data string) *Task {
+func NewTask(plugin, data string, cfg any) *Task {
 	return &Task{
 		Id:    ulid.Make().String(),
-		Url:   url,
+		Plugin:   plugin,
 		Data:  data,
+		Config: cfg,
 		Retry: 0,
 	}
 }
@@ -24,8 +26,8 @@ func (t *Task) GetID() string {
 	return t.Id
 }
 
-func (t *Task) GetURL() string {
-	return t.Url
+func (t *Task) GetPluginName() string {
+	return t.Plugin
 }
 
 func (t *Task) GetRetry() int {

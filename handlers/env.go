@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/AvineshTripathi/orch/models"
+	"github.com/AvineshTripathi/orch/provisioner/queue"
+	"github.com/AvineshTripathi/orch/provisioner/task"
+	"github.com/AvineshTripathi/orch/utils"
 	"io"
 	"net/http"
-	"orch/models"
-	"orch/provisioner/queue"
-	"orch/provisioner/task"
-	"orch/utils"
 )
 
 func AddTaskToQueueHandler(client *queue.Client) http.HandlerFunc {
@@ -24,7 +24,7 @@ func AddTaskToQueueHandler(client *queue.Client) http.HandlerFunc {
 			utils.HandleError(w, "invalid message", http.StatusInternalServerError)
 		}
 
-		tsk := task.NewTask(req.URL, req.Data)
+		tsk := task.NewTask(req.PluginName, "", req.Config)
 
 		_, err = client.AddNewTask(tsk)
 		if err != nil {

@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"github.com/AvineshTripathi/orch/config"
+	"github.com/AvineshTripathi/orch/handlers"
+	"github.com/AvineshTripathi/orch/middleware"
+	"github.com/AvineshTripathi/orch/provisioner-client"
+	"github.com/AvineshTripathi/orch/provisioner/queue"
 	"log"
 	"net/http"
-	"orch/config"
-	"orch/handlers"
-	"orch/middleware"
-	"orch/provisioner-client"
-	"orch/provisioner/queue"
 	"os"
 	"os/signal"
 	"syscall"

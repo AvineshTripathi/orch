@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"github.com/AvineshTripathi/orch/config"
 	"net/http"
-	"orch/config"
 )
 
 // AuthMiddleware checks for a valid Authorization token

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"orch/provisioner/task"
+	"github.com/AvineshTripathi/orch/provisioner/task"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -119,9 +119,9 @@ func (client *Client) ProcessErrorConitnuously() {
 	}()
 }
 
-func (client *Client) ProcessTasksContinuously() error {
+func (client *Client) ProcessTasksContinuously() {
 
-	var task task.Task
+	var tsk task.Task
 	go func() {
 		var offset int64
 		for {
@@ -144,13 +144,13 @@ func (client *Client) ProcessTasksContinuously() error {
 				}
 
 				for _, taskJson := range tasks {
-					err := json.Unmarshal([]byte(taskJson), &task)
+					err := json.Unmarshal([]byte(taskJson), &tsk)
 					if err != nil {
 						fmt.Printf("Error Unmarshalling tasks: %v\n", err)
 						time.Sleep(POLLING_TIME)
 						continue
 					}
-					client.TaskChan <- task
+					client.TaskChan <- tsk
 
 					// remove key from queue storage
 					// _, err = client.DeleteTask(&task)
@@ -165,8 +165,6 @@ func (client *Client) ProcessTasksContinuously() error {
 
 		}
 	}()
-
-	return nil
 }
 
 func (client *Client) StopClient() {

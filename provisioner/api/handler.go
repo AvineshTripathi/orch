@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	pb "orch/proto-provisioner"
-	"orch/provisioner/queue"
-	"orch/provisioner/task"
+	pb "github.com/AvineshTripathi/orch/proto-provisioner"
+	"github.com/AvineshTripathi/orch/provisioner/queue"
+	"github.com/AvineshTripathi/orch/provisioner/task"
 )
 
 type Server struct {
@@ -17,13 +17,8 @@ func (s *Server) GetProvisionerStatus(ctx context.Context, req *pb.StatusRequest
 }
 
 func (s *Server) ExecuteTask(ctx context.Context, req *pb.TaskCreateRequest) (*pb.TaskCreateResponse, error) {
-
-	var t *task.Task
-	// finding the type of config returned
-	switch x := req.Config.ConfigType.(type) {
-	case *pb.EnvConfig_BasicConfig:
-		t = task.NewTask(x.BasicConfig.GetUrl(), x.BasicConfig.GetData())
-	}
+	
+	t := task.NewTask(req.Name, "", req.Data)
 
 	_, err := s.QueueClient.AddNewTask(t)
 	if err != nil {

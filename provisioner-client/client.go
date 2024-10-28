@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
+	pb "github.com/AvineshTripathi/orch/proto-provisioner"
 	"google.golang.org/grpc"
-	pb "orch/proto-provisioner"
 )
 
 // Declare a global variable for the gRPC client
