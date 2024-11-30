@@ -6,5 +6,5 @@ type ServerResponse struct {
 
 type TaskRequest struct {
 	PluginName string
-	Config       any
+	Config     any
 }

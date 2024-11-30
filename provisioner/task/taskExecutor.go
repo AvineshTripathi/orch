@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"plugin"
 	"sync"
-
-	"github.com/AvineshTripathi/orch/provisioner/models"
 )
 
 type TaskExecutor struct {
@@ -38,18 +36,19 @@ func (t *TaskExecutor) Execute(task *Task) error {
 			return err
 		}
 
-		config := models.Config{
-			Cfg: task.Config,
-			LogFile:  "output.log",
-			LogLevel: 2,
-		}
+		// donot need for now
+		// config := models.Config{
+		// 	Cfg: task.Config,
+		// 	LogFile:  "output.log",
+		// 	LogLevel: 2,
+		// }
 
-		fn, ok := runFunc.(func(cfg models.Config) error)
+		fn, ok := runFunc.(func(args ...interface{}) error)
 		if !ok {
 			return fmt.Errorf("unexpected type from module symbol")
 		}
 
-		err = fn(config)
+		err = fn(task.Config)
 		if err != nil {
 			fmt.Errorf("Error while running the plugin: %v", err)
 		}
