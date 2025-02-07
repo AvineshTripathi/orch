@@ -7,6 +7,7 @@ require (
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/redis/go-redis/v9 v9.7.0
 	google.golang.org/grpc v1.67.1
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

@@ -6,13 +6,21 @@ import (
 )
 
 var (
-	Port      string
-	AuthToken string
+	Port          string
+	AuthToken     string
+	RedisUrl      string
+	RedisPassword string
+	RedisQueue    string
+	PluginsPath   string
 )
 
 func Load() {
-	Port = getEnv("PORT", "8080")
+	Port = getEnv("PORT", "8089")
 	AuthToken = getEnv("AUTH_TOKEN", "abcd")
+	RedisUrl = getEnv("REDIS_URL", "localhost:6379")
+	RedisPassword = getEnv("REDIS_PASSWORD", "")
+	RedisQueue = getEnv("REDIS_QUEUE", "store")
+	PluginsPath = getEnv("PLUGINS_PATH", "tasks.yaml")
 }
 
 func getEnv(key, defaultValue string) string {

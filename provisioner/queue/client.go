@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/AvineshTripathi/orch/provisioner/task"
 	"time"
+
+	"github.com/AvineshTripathi/orch/config"
+	"github.com/AvineshTripathi/orch/provisioner/task"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -25,18 +27,21 @@ type Client struct {
 }
 
 func NewConnection() *Client {
+	// Initialize Redis client
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
+		Addr:     config.RedisUrl,
+		Password: config.RedisPassword,
 		DB:       0,
 	})
 
-	return &Client{
+	// Create a new client object
+	c := &Client{
 		Db:        client,
 		Ctx:       context.Background(),
-		QueueName: "random",
+		QueueName: config.RedisQueue,
 		quit:      make(chan bool),
 	}
+	return c
 }
 
 func (client *Client) ConfigureTaskChannel(taskChan, errChan chan task.Task) {
@@ -50,7 +55,7 @@ func (client *Client) AddNewTask(task *task.Task) (int64, error) {
 		return -1, err
 	}
 
-	res := client.Db.ZAdd(client.Ctx, client.QueueName, redis.Z{
+	res := client.Db.ZAdd(client.Ctx, config.RedisQueue, redis.Z{
 		Score:  float64(task.GetRetry()),
 		Member: taskJson,
 	})
@@ -77,7 +82,7 @@ func (client *Client) GetTasksWithPagination(offset, limit int64) ([]string, err
 
 	res, err := client.Db.ZRange(client.Ctx, client.QueueName, offset, offset+limit-1).Result()
 	if err != nil {
-		return nil, fmt.Errorf("error fetching task")
+		return nil, fmt.Errorf("error fetching task: %v", err)
 	}
 
 	if len(res) > 0 {
@@ -144,6 +149,9 @@ func (client *Client) ProcessTasksContinuously() {
 				}
 
 				for _, taskJson := range tasks {
+					if taskJson == "" {
+						continue
+					}
 					err := json.Unmarshal([]byte(taskJson), &tsk)
 					if err != nil {
 						fmt.Printf("Error Unmarshalling tasks: %v\n", err)

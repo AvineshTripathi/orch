@@ -19,10 +19,8 @@ import (
 
 func main() {
 
-	queueClient := queue.NewConnection()
-
-	// Load configuration
 	config.Load()
+	queueClient := queue.NewConnection()
 
 	// Create a new router
 	r := mux.NewRouter()
